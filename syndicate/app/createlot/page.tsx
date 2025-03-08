@@ -1,5 +1,5 @@
 "use client";
-import CreateLottery from "@/components/ui/CreateLottery";
+import CreateLottery from "@/components/CreateLottery";
 
 export default function Dashboard() {
   const handleLotteryCreate = (lotteryData: any) => {

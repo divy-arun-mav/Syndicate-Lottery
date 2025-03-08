@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import JoinLottery from "@/components/ui/JoinLottery";
+import JoinLottery from "@/components/JoinLottery";
 
 export default function JoinLotteryPage() {
   const { id } = useParams(); // Get lottery ID from the URL
