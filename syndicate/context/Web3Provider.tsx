@@ -41,6 +41,8 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
         }
     }, [isConnected]);
 
+    console.log(contractAddress);
+
     return (
         <Web3Context.Provider value={{ connectContract, contract, walletAddress }}>
             {children}

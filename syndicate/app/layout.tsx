@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ContextProvider from "@/context";
 import { headers } from "next/headers";
+import { Web3Provider } from "@/context/Web3Provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +34,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ContextProvider cookies={cookies}>
-          {children}
+          <Web3Provider>
+            {children}
+          </Web3Provider>
         </ContextProvider>
       </body>
     </html>

@@ -16,8 +16,8 @@ if (!projectId) {
 }
 
 const metadata = {
-    name: "MediChain",
-    description: "Medical Chain",
+    name: "sydicate_lottery",
+    description: "Syndicate Lottery",
     url: "http://localhost:3000",
     icons: ["https://avatars.githubusercontent.com/u/179229932"]
 };
