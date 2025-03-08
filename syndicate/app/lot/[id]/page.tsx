@@ -16,26 +16,29 @@ const mockParticipants = [
 export default function LotteryDashboard() {
   const { id } = useParams();
   const router = useRouter();
-  const [countdown, setCountdown] = useState<string>("--:--:--");
+  const [timeLeft, setTimeLeft] = useState(10); // 1 hour in seconds
 
   // Countdown Timer Logic
   useEffect(() => {
-    let time = 3600; // 1 hour countdown
+    if (timeLeft <= 0) {
+      router.push(`/result/${id}`); // Navigate to results page
+      return;
+    }
+
     const interval = setInterval(() => {
-      if (time <= 0) {
-        setCountdown("🎉 Winner Announced!");
-        clearInterval(interval);
-        return;
-      }
-      const hours = Math.floor(time / 3600);
-      const minutes = Math.floor((time % 3600) / 60);
-      const seconds = time % 60;
-      setCountdown(`${hours}:${minutes}:${seconds}`);
-      time--;
+      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [timeLeft, router, id]);
+
+  // Format countdown into HH:MM:SS
+  const formatTime = (seconds: number) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  };
 
   return (
     <div className="w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg text-center mx-auto mt-10">
@@ -49,7 +52,7 @@ export default function LotteryDashboard() {
 
       {/* Countdown Timer */}
       <div className="text-2xl font-bold text-orange-500 mt-6">
-        ⏳ Result in: {countdown}
+        ⏳ Result in: {timeLeft > 0 ? formatTime(timeLeft) : "🎉 Winner Announced!"}
       </div>
 
       {/* Participants List */}

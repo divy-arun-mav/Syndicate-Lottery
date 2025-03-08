@@ -124,3 +124,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+.wheel {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 12px solid #ff4500;
+  background: conic-gradient(
+    #FFD700 0% 25%, 
+    #FF4500 25% 50%, 
+    #008000 50% 75%, 
+    #6a11cb 75% 100%
+  );
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+}
+.animate-spin {
+  animation: spin 3s ease-out;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(720deg); }
+}
+
