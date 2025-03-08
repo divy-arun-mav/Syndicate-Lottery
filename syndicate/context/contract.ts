@@ -2,65 +2,6 @@ export const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;;
 
 export const abi = [
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_lotteryId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_ticketNumber",
-        type: "uint256",
-      },
-    ],
-    name: "buyTicket",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_ticketPrice",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_duration",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_minUsers",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_maxUsers",
-        type: "uint256",
-      },
-    ],
-    name: "createLottery",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_lotteryId",
-        type: "uint256",
-      },
-    ],
-    name: "endLottery",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     anonymous: false,
     inputs: [
       {
@@ -143,6 +84,52 @@ export const abi = [
     type: "event",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_lotteryId",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_ticketNumber",
+        type: "uint256",
+      },
+    ],
+    name: "buyTicket",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_ticketPrice",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_duration",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_minUsers",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_maxUsers",
+        type: "uint256",
+      },
+    ],
+    name: "createLottery",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "creationFee",
     outputs: [
@@ -172,6 +159,19 @@ export const abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_lotteryId",
+        type: "uint256",
+      },
+    ],
+    name: "endLottery",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -266,6 +266,30 @@ export const abi = [
   {
     inputs: [
       {
+        internalType: "uint256",
+        name: "_lotteryId",
+        type: "uint256",
+      },
+    ],
+    name: "getPurchasedTickets",
+    outputs: [
+      {
+        internalType: "address[]",
+        name: "buyers",
+        type: "address[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "ticketNumbers",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "user",
         type: "address",
@@ -282,6 +306,30 @@ export const abi = [
         internalType: "int256[]",
         name: "profits",
         type: "int256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_lotteryId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "getUserTickets",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
       },
     ],
     stateMutability: "view",

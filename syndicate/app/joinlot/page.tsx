@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { useWeb3 } from "@/context/Web3Provider";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 export default function ActiveLotteries() {
   const router = useRouter();
@@ -24,12 +24,18 @@ export default function ActiveLotteries() {
         for (let i = 1; i <= totalLotteries; i++) {
           const lottery = await contract.lotteries(i); 
           console.log(lottery);
+          const startTime = BigNumber.from(lottery.startTime); 
+          const duration = BigNumber.from(lottery.duration);
+          const startTimestamp = startTime.toNumber();
+          const durationSeconds = duration.toNumber();
+          const endTime = startTimestamp + durationSeconds;
+          const currentTime = Math.floor(Date.now() / 1000);
+          const isLotteryOpen = endTime > currentTime;
           fetchedLotteries.push({
             id: i,
-            // name: lottery.name,
-            prizePool: `${ethers.utils.formatEther(lottery.prizePool)}`,
-            entryFee: ` ${ethers.utils.formatEther(lottery.entryFee)}`,
-            timeLeft: `${lottery.timeLeft.toNumber()} seconds`,
+            prizePool: lottery.prizePool ? `${ethers.utils.formatEther(lottery.prizePool)}` : "0",
+            entryFee: lottery.ticketPrice ? `${ethers.utils.formatEther(lottery.ticketPrice)}` : "0",
+            timeLeft: isLotteryOpen ? (endTime - Math.floor(Date.now() / 1000)) : 0
           });
         }
 
@@ -63,7 +69,7 @@ export default function ActiveLotteries() {
               <h2 className="text-xl font-semibold">{lottery.name}</h2>
               <p className="text-sm text-gray-600">💰 Prize Pool: <strong>{lottery.prizePool}</strong></p>
               <p className="text-sm text-gray-600">🎟 Entry Fee: <strong>{lottery.entryFee}</strong></p>
-              <p className="text-sm text-red-500 font-semibold">⏳ {lottery.timeLeft} left</p>
+              <p className="text-sm text-red-500 font-semibold">⏳ {lottery.timeLeft} seconds left</p>
             </Card>
           ))}
         </div>
