@@ -1,17 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 
 // Ticket configuration
 const ticketPrice = 0.05; // Entry fee per ticket
 const unavailableTickets = ["A3", "B1", "B7", "C2"]; // Simulating sold tickets
 
-// Generate all ticket names (A1, A2, A3, B1, B2, B3, C1, C2, C3)
-const generateTickets = () => {
-  const series = ["A", "B", "C"]; 
+// Generate all ticket names (A1, A2, A3, B1, etc.)
+const generateTickets = (): string[] => {
+  const series = ["A", "B", "C"];
   const numbers = [1, 2, 3];
   let tickets: string[] = [];
   series.forEach((s) => {
@@ -22,7 +22,8 @@ const generateTickets = () => {
   return tickets;
 };
 
-export default function JoinLottery({ onPurchase }: { onPurchase?: (selectedTickets: string[]) => void }) {
+export default function JoinLottery({ lotteryId }: { lotteryId: string }) {
+  const router = useRouter();
   const [selectedNumbers, setSelectedNumbers] = useState<string[]>([]);
   const [countdown, setCountdown] = useState<string>("--:--:--");
 
@@ -58,8 +59,11 @@ export default function JoinLottery({ onPurchase }: { onPurchase?: (selectedTick
       alert("Please select at least one ticket!");
       return;
     }
-    if (onPurchase) onPurchase(selectedNumbers);
+
     alert(`✅ Ticket(s) Purchased Successfully: ${selectedNumbers.join(", ")}`);
+
+    // ✅ Redirect to the lottery's main page
+    router.push(`/lot/${lotteryId}`);
   };
 
   const tickets = generateTickets(); // Get all tickets
@@ -71,7 +75,7 @@ export default function JoinLottery({ onPurchase }: { onPurchase?: (selectedTick
 
       {/* Lottery Ticket Info */}
       <Card className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white p-4 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold">Lottery #1024</h3>
+        <h3 className="text-xl font-bold">Lottery #{lotteryId}</h3>
         <p className="text-sm">Prize Pool: <strong>5 ETH</strong></p>
         <p className="text-sm">Entry Fee: <strong>{ticketPrice} ETH</strong></p>
         <p className="text-lg font-semibold text-yellow-300">⏳ Time Left: {countdown}</p>
