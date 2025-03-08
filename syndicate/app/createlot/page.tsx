@@ -1,5 +1,5 @@
 "use client";
-import CreateLottery  from "@/components/ui/CreateLottery";
+import CreateLottery from "@/components/ui/CreateLottery";
 
 export default function Dashboard() {
   const handleLotteryCreate = (lotteryData: any) => {
@@ -8,9 +8,10 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-4xl font-bold mb-6">Dashboard</h1>
-      <CreateLottery onCreate={handleLotteryCreate} />
+    <div className="flex flex-col items-center justify-center min-h-screen p-6">
+      <div className="w-full max-w-lg">
+        <CreateLottery onCreate={handleLotteryCreate} />
+      </div>
     </div>
   );
 }

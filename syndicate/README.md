@@ -1,11 +1,21 @@
 next
-app
+app/
   global.css
+  createlot/
+    page.tsx
+  joinlot/
+    page.tsx
   layout.tsx
   page.tsx
-components
-  ui
+components/
+  ui/
     button.tsx
+    CreateLottery.tsx
+    JoinLottery.tsx
+    card.tsx
+    form.tsx
+    input.tsx
+    label.tsx
   web3
     ConnectWallet.tsx
 config
