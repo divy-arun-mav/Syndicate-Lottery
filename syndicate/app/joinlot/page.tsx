@@ -31,12 +31,14 @@ export default function ActiveLotteries() {
           const endTime = startTimestamp + durationSeconds;
           const currentTime = Math.floor(Date.now() / 1000);
           const isLotteryOpen = endTime > currentTime;
-          fetchedLotteries.push({
-            id: i,
-            prizePool: lottery.prizePool ? `${ethers.utils.formatEther(lottery.prizePool)}` : "0",
-            entryFee: lottery.ticketPrice ? `${ethers.utils.formatEther(lottery.ticketPrice)}` : "0",
-            timeLeft: isLotteryOpen ? (endTime - Math.floor(Date.now() / 1000)) : 0
-          });
+          if (isLotteryOpen) {
+            fetchedLotteries.push({
+              id: i,
+              prizePool: lottery.prizePool ? `${ethers.utils.formatEther(lottery.prizePool)}` : "0",
+              entryFee: lottery.ticketPrice ? `${ethers.utils.formatEther(lottery.ticketPrice)}` : "0",
+              timeLeft: isLotteryOpen ? (endTime - Math.floor(Date.now() / 1000)) : 0
+            });
+          }
         }
 
         setLotteries(fetchedLotteries);
