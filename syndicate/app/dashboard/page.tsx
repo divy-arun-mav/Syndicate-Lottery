@@ -24,7 +24,7 @@ export default function UserDashboard() {
   const [userLotteries, setUserLotteries] = useState<Lottery[]>([]);
   const [purchasedLotteries, setPurchasedLotteries] = useState<Lottery[]>([]);
   const [potentialWinnings, setPotentialWinnings] = useState<string>("0 ETH");
-  const [totalImvestment, setTotalInvestment] = useState<number>(0);
+  const [totalInvestment, setTotalInvestment] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -73,6 +73,8 @@ export default function UserDashboard() {
           }
         }
 
+        const totalInvestment = createdLotteries.length * 0.01;
+        setTotalInvestment(totalInvestment)
         setUserLotteries(createdLotteries);
         setPurchasedLotteries(purchasedLotteries);
       } catch (e) {
@@ -140,7 +142,7 @@ export default function UserDashboard() {
                   <div className="grid grid-cols-2 gap-6">
                     <Card className="p-6 bg-gray-50 rounded-lg shadow">
                       <h3 className="text-xl font-semibold">Total Investment</h3>
-                      <p className="text-2xl font-bold text-blue-600">Ξ 15.2 ETH</p>
+                        <p className="text-2xl font-bold text-blue-600">Ξ{totalInvestment}</p>
                     </Card>
                     <Card className="p-6 bg-gray-50 rounded-lg shadow">
                       <h3 className="text-xl font-semibold">Total Earnings</h3>
