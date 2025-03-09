@@ -35,22 +35,28 @@ Syndicate Hackniche 3.0 represents not just an application, but a synthesis of m
   ![image](https://github.com/user-attachments/assets/93d67be0-3a3e-4498-8b59-576e6139464d)
 
   2. Use Case Diagram:
+     
   ![image](https://github.com/user-attachments/assets/006b73ff-a2a9-4c09-aeda-403b1838aab8)
 
-  3. components diagram:
+  4. components diagram:
+     
   ![image](https://github.com/user-attachments/assets/4638c43b-43ec-4293-9fad-88c38e83f667)
 
-  4. sequence diagram:
+  5. sequence diagram:
+     
   ![image](https://github.com/user-attachments/assets/f40daaf9-c135-4812-b168-29d6a5609b4b)
 
-  5. Activity Diagram:
+  6. Activity Diagram:
+     
   ![image](https://github.com/user-attachments/assets/99ffd9c6-9e0d-47c7-9e96-0ff75c26a223)
 
-  6. Sequence Diagram :
-    ![image](https://github.com/user-attachments/assets/92e0167a-5918-4714-bc4a-75e64cf70e62)
+  7. Sequence Diagram :
+     
+  ![image](https://github.com/user-attachments/assets/92e0167a-5918-4714-bc4a-75e64cf70e62)
 
-  7. CodeBase Diagram:
-    ![image](https://github.com/user-attachments/assets/84f86f32-7b4c-4b34-b194-b15f9b8d4491)
+  8. CodeBase Diagram:
+     
+  ![image](https://github.com/user-attachments/assets/84f86f32-7b4c-4b34-b194-b15f9b8d4491)
  
 
 
