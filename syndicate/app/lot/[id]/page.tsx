@@ -12,7 +12,9 @@ export default function LotteryDashboard() {
   const router = useRouter();
   const { contract } = useWeb3();
 
-  const [participants, setParticipants] = useState<{ name: string; ticket: string }[]>([]);
+  const [participants, setParticipants] = useState<{
+    address: string; name: string; ticket: string 
+}[]>([]);
   const [prizePool, setPrizePool] = useState("0");
   const [duration, setDuration] = useState(3600); // Default 1 hour
   const [timeLeft, setTimeLeft] = useState(3600);

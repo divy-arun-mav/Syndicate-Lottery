@@ -3,54 +3,123 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useWeb3 } from "@/context/Web3Provider";
+import toast from "react-hot-toast";
+import { BigNumber, ethers } from "ethers";
 
 // Define Types for Lotteries
 interface Lottery {
+  id: number;
   name: string;
-  epoch?: number;
-  users?: number;
+  users: number;
   prizePool: string;
   timeLeft: string;
+  duration: number;
 }
 
 export default function UserDashboard() {
   const router = useRouter();
+  const { contract, walletAddress } = useWeb3();
   const [tab, setTab] = useState<"created" | "purchased">("created");
   const [userLotteries, setUserLotteries] = useState<Lottery[]>([]);
   const [purchasedLotteries, setPurchasedLotteries] = useState<Lottery[]>([]);
+  const [potentialWinnings, setPotentialWinnings] = useState<string>("0 ETH");
+  const [totalImvestment, setTotalInvestment] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    async function fetchUserData() {
+    if (!contract || !walletAddress) return;
+
+    const fetchLotteries = async () => {
+      setLoading(true);
       try {
-        const userCreated: Lottery[] = await fetchCreatedLotteries();
-        const userPurchased: Lottery[] = await fetchPurchasedLotteries();
-        setUserLotteries(userCreated);
-        setPurchasedLotteries(userPurchased);
-      } catch (error) {
-        console.error("Error fetching lottery data", error);
+        const count = await contract.callStatic.lotteryCount();
+        const lotteryCount = count.toNumber();
+
+        let createdLotteries: Lottery[] = [];
+        let purchasedLotteries: Lottery[] = [];
+
+        for (let i = 1; i <= lotteryCount; i++) {
+          const lottery = await contract.lotteries(i);
+          console.log(lottery);
+          const participants = await contract.getParticipants(i); // Get users who purchased tickets
+          const startTime = BigNumber.from(lottery.startTime);
+          const duration = BigNumber.from(lottery.duration);
+          const startTimestamp = startTime.toNumber();
+          const durationSeconds = duration.toNumber();
+          const endTime = startTimestamp + durationSeconds;
+          const prizePoolInETH = ethers.utils.formatEther(lottery.prizePool); // Convert prize pool to ETH
+          const timeLeft = Math.max(0, endTime - Math.floor(Date.now() / 1000)); // Calculate time left in seconds
+
+          const lotteryData: Lottery = {
+            id: i,
+            name: `Lottery ${i}`,
+            users: participants.length,
+            prizePool: `${prizePoolInETH.toString()} ETH`, // Convert to ETH
+            timeLeft: `${timeLeft}s`,
+            duration: durationSeconds,
+          };
+
+          console.log(lotteryData);
+
+          // Check if the user created the lottery
+          if (walletAddress === lottery.creator) {
+            createdLotteries.push(lotteryData);
+          }
+
+          // Check if the user participated in the lottery
+          if (participants.includes(walletAddress)) {
+            purchasedLotteries.push(lotteryData);
+          }
+        }
+
+        setUserLotteries(createdLotteries);
+        setPurchasedLotteries(purchasedLotteries);
+      } catch (e) {
+        console.error(e);
+        toast.error("Error fetching lotteries");
+      } finally {
+        setLoading(false);
       }
-    }
-    fetchUserData();
-  }, []);
+    };
+
+    fetchLotteries();
+
+    const getUserProfitLoss = async () => {
+      setLoading(true);
+      try {
+        const res = await contract.getUserProfitLoss(walletAddress);
+        const profits = res.profits.map((profit: BigNumber) => ethers.utils.formatEther(profit));
+        const totalProfit = profits.reduce((acc: number, profit: string) => acc + parseFloat(profit), 0);
+        const prof = Math.abs(totalProfit);
+        setPotentialWinnings(`${prof} ETH`);
+      } catch (e) {
+        console.error(e);
+        toast.error("Error fetching profit/loss data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getUserProfitLoss();
+  }, [contract, walletAddress]);
 
   return (
     <div className="flex min-h-screen bg-white text-gray-900">
       {/* Sidebar Navigation */}
       <div className="w-64 bg-gray-100 p-6 shadow-md h-screen fixed">
         <h2 className="text-2xl font-bold mb-4">📊 Dashboard</h2>
-        <Button 
-          onClick={() => setTab("created")} 
-          className={`w-full mb-2 text-left rounded-lg p-3 transition ${
-            tab === "created" ? "bg-yellow-400 text-gray-900 font-bold" : "bg-gray-200 text-gray-700"
-          }`}
+        <Button
+          onClick={() => setTab("created")}
+          className={`w-full mb-2 text-left rounded-lg p-3 transition ${tab === "created" ? "bg-yellow-400 text-gray-900 font-bold" : "bg-gray-200 text-gray-700"
+            }`}
         >
           🎟️ Created Lotteries
         </Button>
-        <Button 
-          onClick={() => setTab("purchased")} 
-          className={`w-full text-left rounded-lg p-3 transition ${
-            tab === "purchased" ? "bg-yellow-400 text-gray-900 font-bold" : "bg-gray-200 text-gray-700"
-          }`}
+        <Button
+          onClick={() => setTab("purchased")}
+          className={`w-full text-left rounded-lg p-3 transition ${tab === "purchased" ? "bg-yellow-400 text-gray-900 font-bold" : "bg-gray-200 text-gray-700"
+            }`}
         >
           🛒 Purchased Lotteries
         </Button>
@@ -58,77 +127,72 @@ export default function UserDashboard() {
 
       {/* Main Dashboard Content */}
       <div className="flex-1 p-10 ml-64">
-        {tab === "created" ? (
-          <div>
-            <h1 className="text-4xl font-bold text-center mb-6">🏆 Created Lottery Stats</h1>
-            <div className="grid grid-cols-2 gap-6">
-              <Card className="p-6 bg-gray-50 rounded-lg shadow">
-                <h3 className="text-xl font-semibold">Total Investment</h3>
-                <p className="text-2xl font-bold text-blue-600">Ξ 15.2 ETH</p>
-              </Card>
-              <Card className="p-6 bg-gray-50 rounded-lg shadow">
-                <h3 className="text-xl font-semibold">Total Earnings</h3>
-                <p className="text-2xl font-bold text-green-500">Ξ 28.7 ETH</p>
-              </Card>
-            </div>
-
-            {/* Created Lotteries List */}
-            <h3 className="text-xl font-semibold mt-6">📜 Created Lotteries</h3>
-            <div className="mt-3 p-4 bg-gray-50 rounded-lg shadow max-h-60 overflow-y-auto">
-              {userLotteries.map((lottery, index) => (
-                <div key={index} className="p-3 bg-white rounded-lg mb-2 shadow-sm">
-                  <p className="text-lg font-semibold">{lottery.name} (Epoch {lottery.epoch})</p>
-                  <p>👥 {lottery.users} Users | 💰 {lottery.prizePool} | ⏳ {lottery.timeLeft}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+        {loading ? (
+          <p>Loading...</p>
         ) : (
-          <div>
-            <h1 className="text-4xl font-bold text-center mb-6">🎟️ Purchased Lottery Stats</h1>
-            <div className="grid grid-cols-2 gap-6">
-              <Card className="p-6 bg-gray-50 rounded-lg shadow">
-                <h3 className="text-xl font-semibold">Total Tickets</h3>
-                <p className="text-2xl font-bold text-blue-600">42</p>
-              </Card>
-              <Card className="p-6 bg-gray-50 rounded-lg shadow">
-                <h3 className="text-xl font-semibold">Potential Winnings</h3>
-                <p className="text-2xl font-bold text-yellow-500">Ξ 3.5 ETH</p>
-              </Card>
-              <Card className="p-6 bg-gray-50 rounded-lg shadow col-span-2">
-                <h3 className="text-xl font-semibold">Total Investment</h3>
-                <p className="text-2xl font-bold text-red-500">Ξ 10 ETH</p>
-              </Card>
-            </div>
-
-            {/* Purchased Lotteries List */}
-            <h3 className="text-xl font-semibold mt-6">🛒 Purchased Lotteries</h3>
-            <div className="mt-3 p-4 bg-gray-50 rounded-lg shadow max-h-60 overflow-y-auto">
-              {purchasedLotteries.map((lottery, index) => (
-                <div key={index} className="p-3 bg-white rounded-lg mb-2 shadow-sm">
-                  <p className="text-lg font-semibold">{lottery.name}</p>
-                  <p>💰 {lottery.prizePool} | ⏳ {lottery.timeLeft}</p>
+          <>
+            {tab === "created" ? (
+              <div>
+                  <h1 className="text-4xl font-bold text-center mb-6">🏆 Created Lottery Stats</h1>
+                  <div className="grid grid-cols-2 gap-6">
+                    <Card className="p-6 bg-gray-50 rounded-lg shadow">
+                      <h3 className="text-xl font-semibold">Total Investment</h3>
+                      <p className="text-2xl font-bold text-blue-600">Ξ 15.2 ETH</p>
+                    </Card>
+                    <Card className="p-6 bg-gray-50 rounded-lg shadow">
+                      <h3 className="text-xl font-semibold">Total Earnings</h3>
+                      <p className="text-2xl font-bold text-green-500">Ξ 28.7 ETH</p>
+                    </Card>
+                  </div>
+                <h3 className="text-xl font-semibold mt-6">📜 Created Lotteries</h3>
+                <div className="mt-3 p-4 bg-gray-50 rounded-lg shadow max-h-60 overflow-y-auto">
+                  {userLotteries.length > 0 ? (
+                    userLotteries.map((lottery) => (
+                      <div key={lottery.id} className="p-3 bg-white rounded-lg mb-2 shadow-sm">
+                        <p>👥 {lottery.users} Users | 💰 {lottery.prizePool} | ⏳ {lottery.timeLeft} | 🕛 {lottery.duration}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500">No created lotteries found.</p>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+            ) : (
+              <div>
+                <h1 className="text-4xl font-bold text-center mb-6">🎟️ Purchased Lottery Stats</h1>
+                <div className="grid grid-cols-2 gap-6">
+                  <Card className="p-6 bg-gray-50 rounded-lg shadow">
+                    <h3 className="text-xl font-semibold">Total Tickets</h3>
+                        <p className="text-2xl font-bold text-blue-600">{purchasedLotteries.length}</p>
+                  </Card>
+                  <Card className="p-6 bg-gray-50 rounded-lg shadow">
+                    <h3 className="text-xl font-semibold">Potential Winnings</h3>
+                        <p className="text-2xl font-bold text-yellow-500">Ξ {potentialWinnings}</p>
+                  </Card>
+                  <Card className="p-6 bg-gray-50 rounded-lg shadow col-span-2">
+                    <h3 className="text-xl font-semibold">Total Investment</h3>
+                    <p className="text-2xl font-bold text-red-500">Ξ 10 ETH</p>
+                  </Card>
+                </div>
+                    
+                <h3 className="text-xl font-semibold mt-6">🛒 Purchased Lotteries</h3>
+                <div className="mt-3 p-4 bg-gray-50 rounded-lg shadow max-h-60 overflow-y-auto">
+                  {purchasedLotteries.length > 0 ? (
+                    purchasedLotteries.map((lottery) => (
+                      <div key={lottery.id} className="p-3 bg-white rounded-lg mb-2 shadow-sm">
+                        <p className="text-lg font-semibold">{lottery.name}</p>
+                        <p>💰 {lottery.prizePool} | ⏳ {lottery.timeLeft}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500">No purchased lotteries found.</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
   );
-}
-
-// Mock API functions (Replace with actual blockchain API calls)
-async function fetchCreatedLotteries(): Promise<Lottery[]> {
-  return [
-    { name: "Mega Jackpot", epoch: 24, users: 120, prizePool: "Ξ 20 ETH", timeLeft: "2h 15m" },
-    { name: "Lucky Spin", epoch: 10, users: 50, prizePool: "Ξ 5 ETH", timeLeft: "1h 30m" }
-  ];
-}
-
-async function fetchPurchasedLotteries(): Promise<Lottery[]> {
-  return [
-    { name: "Daily Draw", prizePool: "Ξ 3 ETH", timeLeft: "1h 45m" },
-    { name: "Flash Lottery", prizePool: "Ξ 1.2 ETH", timeLeft: "3h 20m" }
-  ];
 }
