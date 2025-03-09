@@ -59,6 +59,34 @@ Syndicate Hackniche 3.0 represents not just an application, but a synthesis of m
   ![image](https://github.com/user-attachments/assets/84f86f32-7b4c-4b34-b194-b15f9b8d4491)
  
 
+  ## screenshots of project :
+  
+  ![image](https://github.com/user-attachments/assets/c709e8b2-a94e-4167-8215-e10c3a5db435)
+
+  ![image](https://github.com/user-attachments/assets/e48b1b34-9a24-42df-8700-f12281523e67)
+
+  ![image](https://github.com/user-attachments/assets/ec7aaa48-2412-4821-aba6-41224da0cdb9)
+
+
+  ![image](https://github.com/user-attachments/assets/a161be8b-3b4a-4acc-9e7c-8d24fe66c93c)
+
+
+  ![image](https://github.com/user-attachments/assets/e2f60a48-ffca-4cd9-9079-172bcbb87d46)
+
+
+  ![image](https://github.com/user-attachments/assets/84504985-bb29-4e49-b6af-64983587aff9)
+
+
+  ![image](https://github.com/user-attachments/assets/3575a325-8502-46c9-8477-b8d9a34fcdcc)
+
+  ![image](https://github.com/user-attachments/assets/920b97e2-e366-4990-92fd-b753afc300a9)
+
+
+
+
+
+
+
 
 
     
