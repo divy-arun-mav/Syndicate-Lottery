@@ -1,14 +1,11 @@
 "use client";
-
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useWeb3 } from "@/context/Web3Provider";
-
-// Ticket configuration
-const ticketPrice = 0.05; // Entry fee per ticket
-const unavailableTickets = ["A3", "B1", "B7", "C2"]; // Simulating sold tickets
+import toast from "react-hot-toast";
+import { ethers } from "ethers";
 
 // Generate all ticket names (A1, A2, A3, B1, etc.)
 const generateTickets = (): string[] => {
@@ -23,124 +20,202 @@ const generateTickets = (): string[] => {
   return tickets;
 };
 
-export default function JoinLottery({ lotteryId }: { lotteryId: string }) {
+// Ticket mapping between names and numbers
+const ticketMapping: { [key: string]: number } = {
+  A1: 1, A2: 2, A3: 3,
+  B1: 4, B2: 5, B3: 6,
+  C1: 7, C2: 8, C3: 9,
+};
+
+const reverseTicketMapping: { [key: number]: string } = Object.fromEntries(
+  Object.entries(ticketMapping).map(([key, value]) => [value, key])
+);
+
+export default function JoinLottery() {
   const router = useRouter();
-  const [selectedNumbers, setSelectedNumbers] = useState<string[]>([]);
+  const { id } = useParams(); // Lottery ID from URL
+  const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<string>("--:--:--");
-  const { contract } = useWeb3();
-  
-  // Countdown Timer Logic
+  const [lottery, setLottery] = useState<any>(null);
+  const [unavailableTickets, setUnavailableTickets] = useState<string[]>([]);
+  const { contract, walletAddress } = useWeb3();
+
+  // Fetch lottery details and purchased tickets
   useEffect(() => {
-    let time = 3600; // 1 hour countdown
-    const interval = setInterval(() => {
-      if (time <= 0) {
+    const fetchLotteryDetails = async () => {
+      if (!contract) return toast.error("Contract not initialized");
+      try {
+        const tx = await contract.lotteries(id);
+        const startTime = tx.startTime.toNumber();
+        const duration = tx.duration.toNumber();
+        const entryFee = ethers.utils.formatEther(tx.ticketPrice);
+        const prizePool = ethers.utils.formatEther(tx.prizePool);
+
+        setLottery({
+          id,
+          startTime,
+          duration,
+          entryFee,
+          prizePool,
+        });
+
+        startCountdown(startTime + duration);
+      } catch (error) {
+        console.error("Error fetching lottery:", error);
+        toast.error("Failed to load lottery data");
+      }
+    };
+
+    const fetchPurchasedTickets = async () => {
+      if (!contract) return;
+      try {
+        const [buyers, ticketNumbers] = await contract.getPurchasedTickets(id);
+        const purchasedTicketNames = ticketNumbers.map((num: number) => reverseTicketMapping[num]);
+
+        setUnavailableTickets(purchasedTicketNames);
+      } catch (error) {
+        console.error("Error fetching purchased tickets:", error);
+      }
+    };
+
+    if (id) {
+      fetchLotteryDetails();
+      fetchPurchasedTickets();
+    }
+  }, [contract, id]);
+
+  // Countdown Timer Logic
+  const startCountdown = (endTime: number) => {
+    const updateCountdown = () => {
+      const now = Math.floor(Date.now() / 1000);
+      const timeLeft = endTime - now;
+      if (timeLeft <= 0) {
         setCountdown("🎉 Lottery Ended!");
-        clearInterval(interval);
         return;
       }
-      const hours = Math.floor(time / 3600);
-      const minutes = Math.floor((time % 3600) / 60);
-      const seconds = time % 60;
-      setCountdown(`${hours}:${minutes}:${seconds}`);
-      time--;
-    }, 1000);
 
+      const hours = Math.floor(timeLeft / 3600);
+      const minutes = Math.floor((timeLeft % 3600) / 60);
+      const seconds = timeLeft % 60;
+      setCountdown(`${hours}h ${minutes}m ${seconds}s`);
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
-  }, []);
+  };
 
   const toggleTicketSelection = (ticket: string) => {
     if (unavailableTickets.includes(ticket)) return;
 
-    setSelectedNumbers((prev) =>
-      prev.includes(ticket) ? prev.filter((num) => num !== ticket) : [...prev, ticket]
-    );
+    // Allow only one ticket selection at a time
+    setSelectedTicket(ticket === selectedTicket ? null : ticket);
   };
 
-  const handlePurchase = () => {
-    if (selectedNumbers.length === 0) {
-      alert("Please select at least one ticket!");
-      return;
+  const handlePurchase = async () => {
+    if (!selectedTicket) {
+      return toast.error("Please select a ticket!");
+    }
+    if (!contract) {
+      return toast.error("Contract not initialized");
     }
 
-    alert(`✅ Ticket(s) Purchased Successfully: ${selectedNumbers.join(", ")}`);
+    try {
+      const ticketNumber = ticketMapping[selectedTicket]; // Get mapped number
+      if (ticketNumber === undefined) {
+        return toast.error("Invalid ticket selection");
+      }
 
-    // ✅ Redirect to the lottery's main page
-    router.push(`/lot/${lotteryId}`);
+      const totalCost = ethers.utils.parseEther(lottery.entryFee);
+
+      const tx = await contract.buyTicket(id, ticketNumber, { value: totalCost });
+      await tx.wait();
+
+      toast.success(`✅ Ticket Purchased: ${selectedTicket}`);
+      setUnavailableTickets((prev) => [...prev, selectedTicket]);
+      setSelectedTicket(null);
+      router.push(`/lot/${id}`);
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      toast.error("Failed to purchase ticket");
+    }
   };
 
   const tickets = generateTickets(); // Get all tickets
 
   return (
-    <div className="join-lottery-page">
-      <div className="lottery-container">
-        <h2 className="heading">
-          🎟 Select Your Lottery Ticket
-        </h2>
-        <p className="subheading">Choose your lucky number!</p>
+    <>
+      <div className="join-lottery-page">
+        <div className="lottery-container">
+          <h2 className="heading">
+            🎟 Select Your Lottery Ticket
+          </h2>
+          <p className="subheading">Choose your lucky number!</p>
 
-        {/* Lottery Ticket Info */}
-        <Card className="lottery-card">
-          <h3 className="card-heading">Lottery #{lotteryId}</h3>
-          <p className="card-text">
-            Prize Pool: <strong>5 ETH</strong>
-          </p>
-          <p className="card-text">
-            Entry Fee: <strong>{ticketPrice} ETH</strong>
-          </p>
-          <p className="card-timer">
-            ⏳ Time Left: {countdown}
-          </p>
-        </Card>
+          {/* Lottery Ticket Info */}
+          {lottery ? (
+            <Card className="lottery-card">
+              <h3 className="card-heading">Lottery #{id}</h3>
+              <p className="card-text">
+                Prize Pool: <strong>{lottery.prizePool}</strong>
+              </p>
+              <p className="card-text">
+                Entry Fee: <strong>{lottery.entryFee} ETH</strong>
+              </p>
+              <p className="card-timer">
+                ⏳ Time Left: {countdown}
+              </p>
+            </Card>
+          ) : (
+            <p>Loading lottery details...</p>
+          )}
 
-        {/* Ticket Selection Grid */}
-        <div className="ticket-section">
-          <label className="ticket-label">
-            Select Your Ticket Number
-          </label>
-          <div className="ticket-grid">
-            {tickets.map((ticket) => (
-              <div
-                key={ticket}
-                className={`ticket 
-                  ${
-                    unavailableTickets.includes(ticket)
-                      ? "ticket-unavailable"
-                      : selectedNumbers.includes(ticket)
-                      ? "ticket-selected"
-                      : "ticket-available"
-                  }`}
-                onClick={() => toggleTicketSelection(ticket)}
-              >
-                {ticket}
-              </div>
-            ))}
+          {/* Ticket Selection Grid */}
+          <div className="ticket-section">
+            <label className="ticket-label">
+              Select Your Ticket Number
+            </label>
+            <div className="ticket-grid">
+              {tickets.map((ticket) => (
+                <div
+                  key={ticket}
+                  className={`ticket 
+                    ${
+                      unavailableTickets.includes(ticket)
+                        ? "ticket-unavailable"
+                        : selectedTicket === ticket
+                        ? "ticket-selected"
+                        : "ticket-available"
+                    }`}
+                  onClick={() => toggleTicketSelection(ticket)}
+                >
+                  {ticket}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Selected Tickets & Price */}
-        <div className="ticket-summary">
-          Selected Tickets:{" "}
-          <span className="summary-highlight">
-            {selectedNumbers.length > 0 ? selectedNumbers.join(", ") : "None"}
-          </span>
-        </div>
-        <div className="ticket-summary">
-          Total Cost:{" "}
-          <span className="cost-highlight">
-            {(selectedNumbers.length * ticketPrice).toFixed(2)}
-          </span>{" "}
-          ETH
-        </div>
+          {/* Selected Ticket & Price */}
+          <div className="ticket-summary">
+            Selected Ticket:{" "}
+            <span className="summary-highlight">
+              {selectedTicket || "None"}
+            </span>
+          </div>
+          <div className="ticket-summary">
+            Total Cost: <span className="text-green-500">{selectedTicket ? lottery?.entryFee : "0.00"}</span> ETH
+          </div>
 
-        {/* Purchase Ticket Button */}
-        <Button
-          onClick={handlePurchase}
-          className="purchase-button"
-        >
-          🎫 Purchase Ticket
-        </Button>
+          {/* Purchase Ticket Button */}
+          <Button
+            onClick={handlePurchase}
+            className="purchase-button"
+            disabled={!selectedTicket}
+          >
+            🎫 Purchase Ticket
+          </Button>
+        </div>
       </div>
-
       <style jsx>{`
         /* Overall Page Styling */
         .join-lottery-page {
@@ -158,7 +233,7 @@ export default function JoinLottery({ lotteryId }: { lotteryId: string }) {
           background-color: #F5F5F5; /* Off-white background */
           padding: 2rem;
           border-radius: 1rem;
-          box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
           text-align: center;
           width: 100%;
           max-width: 400px;
@@ -295,7 +370,14 @@ export default function JoinLottery({ lotteryId }: { lotteryId: string }) {
         a:hover {
           color: #FFD700;
         }
+        
+        /* Override text color to gold for h2, h3, and p within the lottery container */
+        .lottery-container h2,
+        .lottery-container h3,
+        .lottery-container p {
+          color: #ffd700 !important;
+        }
       `}</style>
-    </div>
+    </>
   );
 }

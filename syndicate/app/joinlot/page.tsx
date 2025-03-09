@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { useWeb3 } from "@/context/Web3Provider";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 export default function ActiveLotteries() {
   const router = useRouter();
@@ -24,13 +24,21 @@ export default function ActiveLotteries() {
         for (let i = 1; i <= totalLotteries; i++) {
           const lottery = await contract.lotteries(i); 
           console.log(lottery);
-          fetchedLotteries.push({
-            id: i,
-            // name: lottery.name,
-            prizePool: `${ethers.utils.formatEther(lottery.prizePool)}`,
-            entryFee: ` ${ethers.utils.formatEther(lottery.entryFee)}`,
-            timeLeft: `${lottery.timeLeft.toNumber()} seconds`,
-          });
+          const startTime = BigNumber.from(lottery.startTime); 
+          const duration = BigNumber.from(lottery.duration);
+          const startTimestamp = startTime.toNumber();
+          const durationSeconds = duration.toNumber();
+          const endTime = startTimestamp + durationSeconds;
+          const currentTime = Math.floor(Date.now() / 1000);
+          const isLotteryOpen = endTime > currentTime;
+          if (isLotteryOpen) {
+            fetchedLotteries.push({
+              id: i,
+              prizePool: lottery.prizePool ? `${ethers.utils.formatEther(lottery.prizePool)}` : "0",
+              entryFee: lottery.ticketPrice ? `${ethers.utils.formatEther(lottery.ticketPrice)}` : "0",
+              timeLeft: isLotteryOpen ? (endTime - Math.floor(Date.now() / 1000)) : 0
+            });
+          }
         }
 
         setLotteries(fetchedLotteries);
