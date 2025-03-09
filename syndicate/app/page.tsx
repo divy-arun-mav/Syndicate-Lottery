@@ -1,16 +1,17 @@
 "use client";
-import Link from "next/link"
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Image from "next/image"
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import ConnectWallet from "@/components/Web3/ConnectWallet";
-import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } from "lucide-react"
+import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } from "lucide-react";
   
-  export default function Home() {
-    const router = useRouter();
-    return (
+export default function Home() {
+  const router = useRouter();
+  return (
+    <>
       <div className="flex min-h-screen flex-col">
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-50 w-full border-b custom-header">
           <div className="container flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
               <Ticket className="h-6 w-6 text-primary" />
@@ -29,10 +30,10 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
             </nav>
             <div className="flex items-center gap-4">
               <Button variant="outline" size="sm">
-              <ConnectWallet/>
+                <ConnectWallet />
               </Button>
               <Button onClick={() => router.push("/dashboard")} size="lg" className="gap-1">
-                      Dashboard <ArrowRight className="h-4 w-4" />
+                Dashboard <ArrowRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -61,20 +62,20 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                   </div>
                 </div>
                 <div className="flex items-center justify-center">
-                    <div className="relative h-[350px] w-[350px] md:h-[400px] md:w-[400px] lg:h-[500px] lg:w-[500px]">
-                      <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(255,223,0,0.5),rgba(255,165,0,0.2))] blur-3xl"></div>
-                      <div className="relative h-full w-full flex items-center justify-center">
-                        <Image
-                          src="/slotmachine.jpg"
-                          alt="Slot Machine"
-                          width={500}
-                          height={500}
-                          className="object-contain filter drop-shadow-[0_0_15px_rgba(255,223,0,0.8)] transition-transform duration-300 ease-in-out hover:scale-110"
-                          priority
-                        />
-                      </div>
+                  <div className="relative h-[350px] w-[350px] md:h-[400px] md:w-[400px] lg:h-[500px] lg:w-[500px]">
+                    <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(255,223,0,0.5),rgba(255,165,0,0.2))] blur-3xl"></div>
+                    <div className="relative h-full w-full flex items-center justify-center">
+                      <Image
+                        src="/slotmachine.jpg"
+                        alt="Slot Machine"
+                        width={500}
+                        height={500}
+                        className="object-contain filter drop-shadow-[0_0_15px_rgba(255,223,0,0.8)] transition-transform duration-300 ease-in-out hover:scale-110"
+                        priority
+                      />
                     </div>
                   </div>
+                </div>
               </div>
             </div>
           </section>
@@ -86,8 +87,8 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                   <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm text-primary-foreground">
                     Features
                   </div>
-                  <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">Why Choose Syndicate?</h2>
-                  <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed">
+                  <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight text-[#ffd700]">Why Choose Syndicate?</h2>
+                  <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed text-[#ffd700]">
                     Our decentralized lottery platform offers unique features designed for fairness and excitement.
                   </p>
                 </div>
@@ -97,8 +98,8 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                   <div className="rounded-full bg-primary/10 p-3">
                     <Award className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold">Partial Matching Rewards</h3>
-                  <p className="text-center text-muted-foreground">
+                  <h3 className="text-xl font-bold text-[#ffd700]">Partial Matching Rewards</h3>
+                  <p className="text-center text-muted-foreground text-[#ffd700]">
                     Get 4% of the pool for 4-digit matches and 2% for 3-digit matches, increasing your chances of winning.
                   </p>
                 </div>
@@ -106,8 +107,8 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                   <div className="rounded-full bg-primary/10 p-3">
                     <Coins className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold">Creator Incentives</h3>
-                  <p className="text-center text-muted-foreground">
+                  <h3 className="text-xl font-bold text-[#ffd700]">Creator Incentives</h3>
+                  <p className="text-center  text-[#ffd700]">
                     Lottery creators earn 5% of the total pool, encouraging more exciting lotteries for everyone.
                   </p>
                 </div>
@@ -115,8 +116,8 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                   <div className="rounded-full bg-primary/10 p-3">
                     <CheckCircle className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold">Guaranteed Fairness</h3>
-                  <p className="text-center text-muted-foreground">
+                  <h3 className="text-xl font-bold text-[#ffd700]">Guaranteed Fairness</h3>
+                  <p className="text-center text-muted-foreground text-[#ffd700]">
                     Smart contracts ensure transparent selection of winners with no possibility of manipulation.
                   </p>
                 </div>
@@ -124,8 +125,8 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                   <div className="rounded-full bg-primary/10 p-3">
                     <Users className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold">Minimum Participation</h3>
-                  <p className="text-center text-muted-foreground">
+                  <h3 className="text-xl font-bold text-[#ffd700]">Minimum Participation</h3>
+                  <p className="text-center text-muted-foreground text-[#ffd700]">
                     If minimum participation isn't met, all funds are returned, ensuring fair play for everyone.
                   </p>
                 </div>
@@ -133,8 +134,8 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                   <div className="rounded-full bg-primary/10 p-3">
                     <Gift className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold">Customizable Lotteries</h3>
-                  <p className="text-center text-muted-foreground">
+                  <h3 className="text-xl font-bold text-[#ffd700]">Customizable Lotteries</h3>
+                  <p className="text-center text-muted-foreground text-[#ffd700]">
                     Create lotteries with custom prize pools, durations, and participant limits.
                   </p>
                 </div>
@@ -142,8 +143,8 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                   <div className="rounded-full bg-primary/10 p-3">
                     <Ticket className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold">Detailed History</h3>
-                  <p className="text-center text-muted-foreground">
+                  <h3 className="text-xl font-bold text-[#ffd700]">Detailed History</h3>
+                  <p className="text-center text-muted-foreground text-[#ffd700]">
                     Track your participation, profits, losses, and created lotteries in one dashboard.
                   </p>
                 </div>
@@ -176,7 +177,7 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                     alt="Create a lottery"
                     className="rounded-lg"
                   />
-                  <h3 className="text-xl font-bold">Create or Join</h3>
+                  <h3 className="text-xl font-bold text-[#ffd700]">Create or Join</h3>
                   <p className="text-center text-muted-foreground">
                     Create your own lottery with custom parameters or join existing ones with your preferred tickets.
                   </p>
@@ -192,7 +193,7 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                     alt="Wait for completion"
                     className="rounded-lg"
                   />
-                  <h3 className="text-xl font-bold">Wait for Completion</h3>
+                  <h3 className="text-xl font-bold text-[#ffd700]">Wait for Completion</h3>
                   <p className="text-center text-muted-foreground">
                     Lotteries run until their time limit or maximum participation is reached, with transparent tracking.
                   </p>
@@ -208,7 +209,7 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
                     alt="Collect rewards"
                     className="rounded-lg"
                   />
-                  <h3 className="text-xl font-bold">Collect Rewards</h3>
+                  <h3 className="text-xl font-bold text-[#ffd700]">Collect Rewards</h3>
                   <p className="text-center text-muted-foreground">
                     Winners automatically receive their rewards, with partial matches also earning a percentage of the
                     pool.
@@ -270,42 +271,42 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
               </div>
               <div className="mx-auto grid max-w-5xl gap-6 py-12 md:grid-cols-2">
                 <div className="rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">How are winners selected?</h3>
+                  <h3 className="text-xl font-bold text-[#ffd700]">How are winners selected?</h3>
                   <p className="mt-2 text-muted-foreground">
                     Winners are selected using a transparent random function on the blockchain that cannot be manipulated,
                     ensuring fair selection.
                   </p>
                 </div>
                 <div className="rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">What happens if minimum participation isn't met?</h3>
+                  <h3 className="text-xl font-bold text-[#ffd700]">What happens if minimum participation isn't met?</h3>
                   <p className="mt-2 text-muted-foreground">
                     If the minimum number of participants isn't reached, all funds are returned to ticket purchasers and
                     the lottery creation fee is returned to the creator.
                   </p>
                 </div>
                 <div className="rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">How do partial matches work?</h3>
+                  <h3 className="text-xl font-bold text-[#ffd700]">How do partial matches work?</h3>
                   <p className="mt-2 text-muted-foreground">
                     If your ticket has 4 matching digits, you receive 4% of the pool. If it has 3 matching digits, you
                     receive 2% of the pool, even if you're not the main winner.
                   </p>
                 </div>
                 <div className="rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">How much does it cost to create a lottery?</h3>
+                  <h3 className="text-xl font-bold text-[#ffd700]">How much does it cost to create a lottery?</h3>
                   <p className="mt-2 text-muted-foreground">
                     There is a small fee to create a lottery, but creators earn 5% of the total pool amount, making it
                     potentially profitable to create popular lotteries.
                   </p>
                 </div>
                 <div className="rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Can I track my lottery history?</h3>
+                  <h3 className="text-xl font-bold text-[#ffd700]">Can I track my lottery history?</h3>
                   <p className="mt-2 text-muted-foreground">
                     Yes, you can view all lotteries you've participated in, created, your profits, losses, and more
                     through your user dashboard.
                   </p>
                 </div>
                 <div className="rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Is Syndicate secure?</h3>
+                  <h3 className="text-xl font-bold text-[#ffd700]">Is Syndicate secure?</h3>
                   <p className="mt-2 text-muted-foreground">
                     Yes, all lottery operations run on secure smart contracts that have been audited for security and
                     fairness, with all transactions recorded on the blockchain.
@@ -315,7 +316,7 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
             </div>
           </section>
         </main>
-        <footer className="w-full border-t bg-background py-6 md:py-12">
+        <footer className="w-full border-t custom-footer py-6 md:py-12">
           <div className="container px-4 md:px-6">
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
               <div className="space-y-4">
@@ -394,7 +395,89 @@ import { ArrowRight, Award, CheckCircle, Coins, Gift, Ticket, Trophy, Users } fr
           </div>
         </footer>
       </div>
-    )
-  }
-  
-  
+      <style jsx>{`
+        /* Overall Layout */
+        .container {
+          font-family: "Roboto", sans-serif;
+        }
+        /* Global Page Background */
+        .flex.min-h-screen {
+          background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+          color: #f5f5f5;
+        }
+        /* Header Styling */
+        .custom-header {
+          background: rgba(20, 20, 40, 0.95);
+          backdrop-filter: blur(5px);
+          border-color: #2c3e50;
+        }
+        header span {
+          font-family: "Montserrat", sans-serif;
+          color: #ffd700;
+        }
+        nav a {
+          font-family: "Roboto", sans-serif;
+          color: #f5f5f5;
+        }
+        nav a:hover {
+          color: #ffd700;
+        }
+        /* Button Overrides */
+        .btn, button {
+          font-family: "Roboto", sans-serif;
+        }
+        /* Hero Section */
+        h1 {
+          font-family: "Montserrat", sans-serif;
+          color: #ffd700;
+        }
+        p.text-muted-foreground {
+          color: #ccc;
+        }
+        /* Features Section */
+        #features h2 {
+          font-family: "Montserrat", sans-serif;
+          color: #ffd700;
+        }
+        #features p {
+          font-family: "Roboto", sans-serif;
+          color: #ccc;
+        }
+        /* How It Works Section */
+        #how-it-works h2 {
+          font-family: "Montserrat", sans-serif;
+          color: #ffd700;
+        }
+        #how-it-works p {
+          font-family: "Roboto", sans-serif;
+          color: #ccc;
+        }
+        /* FAQ Section */
+        #faq h2 {
+          font-family: "Montserrat", sans-serif;
+          color: #ffd700;
+        }
+        #faq p {
+          font-family: "Roboto", sans-serif;
+          color: #ccc;
+        }
+        /* Footer Styling */
+        .custom-footer {
+          background: #141414;
+          border-color: #2c3e50;
+        }
+        footer h4 {
+          font-family: "Montserrat", sans-serif;
+          color: #ffd700;
+        }
+        footer a {
+          font-family: "Roboto", sans-serif;
+          color: #f5f5f5;
+        }
+        footer a:hover {
+          color: #ffd700;
+        }
+      `}</style>
+    </>
+  );
+}

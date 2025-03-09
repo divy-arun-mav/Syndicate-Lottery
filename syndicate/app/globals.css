@@ -138,11 +138,55 @@
   );
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
 }
+
 .animate-spin {
   animation: spin 3s ease-out;
 }
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(720deg); }
 }
 
+/* -------------------------------------------------------------------------
+   Alternative Color Combinations for the .wheel Element:
+   -------------------------------------------------------------------------
+   Option 1: Classic Casino Red, Gold & Black
+   ---------------------------------------------------
+   .wheel {
+     border: 12px solid #B22222;         // Firebrick red border
+     background: conic-gradient(
+       #FFD700 0% 25%,                   // Gold
+       #B22222 25% 50%,                  // Firebrick red
+       #000000 50% 75%,                  // Black
+       #8B0000 75% 100%                  // Dark red
+     );
+     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+   }
+
+   Option 2: Modern Blue, Teal & Silver
+   ---------------------------------------------------
+   .wheel {
+     border: 12px solid #1E90FF;         // Dodger Blue border
+     background: conic-gradient(
+       #C0C0C0 0% 25%,                   // Silver
+       #1E90FF 25% 50%,                  // Dodger Blue
+       #20B2AA 50% 75%,                  // Light Sea Green (Teal)
+       #4682B4 75% 100%                  // Steel Blue
+     );
+     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+   }
+   
+   Option 3: Vibrant Purple, Magenta & Cyan
+   ---------------------------------------------------
+   .wheel {
+     border: 12px solid #8A2BE2;         // Blue Violet border
+     background: conic-gradient(
+       #FF00FF 0% 25%,                   // Magenta
+       #8A2BE2 25% 50%,                  // Blue Violet
+       #00FFFF 50% 75%,                  // Cyan
+       #4B0082 75% 100%                  // Indigo
+     );
+     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+   }
+*/

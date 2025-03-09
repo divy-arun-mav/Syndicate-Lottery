@@ -29,7 +29,6 @@ export default function JoinLottery({ lotteryId }: { lotteryId: string }) {
   const [countdown, setCountdown] = useState<string>("--:--:--");
   const { contract } = useWeb3();
   
-
   // Countdown Timer Logic
   useEffect(() => {
     let time = 3600; // 1 hour countdown
@@ -72,53 +71,231 @@ export default function JoinLottery({ lotteryId }: { lotteryId: string }) {
   const tickets = generateTickets(); // Get all tickets
 
   return (
-    <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg text-center">
-      <h2 className="text-3xl font-bold text-blue-500">🎟 Select Your Lottery Ticket</h2>
-      <p className="text-sm text-gray-500">Choose your lucky number!</p>
+    <div className="join-lottery-page">
+      <div className="lottery-container">
+        <h2 className="heading">
+          🎟 Select Your Lottery Ticket
+        </h2>
+        <p className="subheading">Choose your lucky number!</p>
 
-      {/* Lottery Ticket Info */}
-      <Card className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white p-4 rounded-lg shadow-lg">
-        <h3 className="text-xl font-bold">Lottery #{lotteryId}</h3>
-        <p className="text-sm">Prize Pool: <strong>5 ETH</strong></p>
-        <p className="text-sm">Entry Fee: <strong>{ticketPrice} ETH</strong></p>
-        <p className="text-lg font-semibold text-yellow-300">⏳ Time Left: {countdown}</p>
-      </Card>
+        {/* Lottery Ticket Info */}
+        <Card className="lottery-card">
+          <h3 className="card-heading">Lottery #{lotteryId}</h3>
+          <p className="card-text">
+            Prize Pool: <strong>5 ETH</strong>
+          </p>
+          <p className="card-text">
+            Entry Fee: <strong>{ticketPrice} ETH</strong>
+          </p>
+          <p className="card-timer">
+            ⏳ Time Left: {countdown}
+          </p>
+        </Card>
 
-      {/* Ticket Selection Grid */}
-      <div className="mt-4 text-left">
-        <label className="block text-md font-semibold text-gray-700">Select Your Ticket Number</label>
-        <div className="grid grid-cols-5 gap-3 mt-2">
-          {tickets.map((ticket) => (
-            <div
-              key={ticket}
-              className={`w-10 h-10 flex items-center justify-center rounded-md font-bold cursor-pointer transition-all
-              ${
-                unavailableTickets.includes(ticket)
-                  ? "bg-gray-400 text-gray-700 cursor-not-allowed"
-                  : selectedNumbers.includes(ticket)
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 hover:bg-blue-400 hover:text-white"
-              }`}
-              onClick={() => toggleTicketSelection(ticket)}
-            >
-              {ticket}
-            </div>
-          ))}
+        {/* Ticket Selection Grid */}
+        <div className="ticket-section">
+          <label className="ticket-label">
+            Select Your Ticket Number
+          </label>
+          <div className="ticket-grid">
+            {tickets.map((ticket) => (
+              <div
+                key={ticket}
+                className={`ticket 
+                  ${
+                    unavailableTickets.includes(ticket)
+                      ? "ticket-unavailable"
+                      : selectedNumbers.includes(ticket)
+                      ? "ticket-selected"
+                      : "ticket-available"
+                  }`}
+                onClick={() => toggleTicketSelection(ticket)}
+              >
+                {ticket}
+              </div>
+            ))}
+          </div>
         </div>
+
+        {/* Selected Tickets & Price */}
+        <div className="ticket-summary">
+          Selected Tickets:{" "}
+          <span className="summary-highlight">
+            {selectedNumbers.length > 0 ? selectedNumbers.join(", ") : "None"}
+          </span>
+        </div>
+        <div className="ticket-summary">
+          Total Cost:{" "}
+          <span className="cost-highlight">
+            {(selectedNumbers.length * ticketPrice).toFixed(2)}
+          </span>{" "}
+          ETH
+        </div>
+
+        {/* Purchase Ticket Button */}
+        <Button
+          onClick={handlePurchase}
+          className="purchase-button"
+        >
+          🎫 Purchase Ticket
+        </Button>
       </div>
 
-      {/* Selected Tickets & Price */}
-      <div className="mt-4 text-lg font-semibold text-gray-700">
-        Selected Tickets: <span className="text-blue-500">{selectedNumbers.length > 0 ? selectedNumbers.join(", ") : "None"}</span>
-      </div>
-      <div className="mt-2 text-lg font-semibold text-gray-700">
-        Total Cost: <span className="text-green-500">{(selectedNumbers.length * ticketPrice).toFixed(2)}</span> ETH
-      </div>
+      <style jsx>{`
+        /* Overall Page Styling */
+        .join-lottery-page {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #1A1A2E; /* Dark primary background */
+          font-family: 'Roboto', sans-serif;
+          padding: 1rem;
+        }
+        
+        /* Container Styling */
+        .lottery-container {
+          background-color: #F5F5F5; /* Off-white background */
+          padding: 2rem;
+          border-radius: 1rem;
+          box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+          text-align: center;
+          width: 100%;
+          max-width: 400px;
+          animation: fadeIn 1s ease-in-out;
+        }
 
-      {/* Purchase Ticket Button */}
-      <Button onClick={handlePurchase} className="mt-6 w-full">
-        🎫 Purchase Ticket
-      </Button>
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Headings and Subheadings */
+        .heading {
+          font-size: 2.5rem;
+          font-weight: bold;
+          color: #FFD700; /* Gold accent */
+          margin-bottom: 0.5rem;
+          font-family: 'Montserrat', sans-serif;
+          text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+          animation: slideIn 1s ease-out;
+        }
+        @keyframes slideIn {
+          from { transform: translateY(-20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        .subheading {
+          font-size: 1rem;
+          color: #555;
+          margin-bottom: 1rem;
+        }
+
+        /* Card (Lottery Ticket Info) Styling */
+        .lottery-card {
+          background: linear-gradient(45deg, #4B79A1, #283E51);
+          color: #fff;
+          padding: 1rem;
+          border-radius: 1rem;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+          margin: 1rem 0;
+        }
+        .card-heading {
+          font-size: 1.5rem;
+          font-weight: bold;
+        }
+        .card-text {
+          font-size: 0.9rem;
+          margin: 0.25rem 0;
+        }
+        .card-timer {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #FFD700;
+        }
+        
+        /* Ticket Selection Section */
+        .ticket-section {
+          margin-top: 1rem;
+          text-align: left;
+        }
+        .ticket-label {
+          display: block;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 0.5rem;
+        }
+        .ticket-grid {
+          display: grid;
+          grid-template-columns: repeat(5, 1fr);
+          gap: 0.5rem;
+        }
+        .ticket {
+          width: 2.5rem;
+          height: 2.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 0.375rem;
+          font-weight: bold;
+          cursor: pointer;
+          transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .ticket-available {
+          background-color: #4B5563; /* Gray-700 */
+          color: #fff;
+        }
+        .ticket-available:hover {
+          background-color: #3B82F6; /* Blue-500 */
+        }
+        .ticket-selected {
+          background-color: #3B82F6; /* Blue-500 */
+          color: #fff;
+        }
+        .ticket-unavailable {
+          background-color: #4B5563; /* Gray-600 */
+          color: #9CA3AF; /* Gray-400 */
+          cursor: not-allowed;
+        }
+        
+        /* Summary Styling */
+        .ticket-summary {
+          margin-top: 1rem;
+          font-size: 1rem;
+          font-weight: 600;
+          color: #333;
+        }
+        .summary-highlight {
+          color: #FACC15; /* Yellow-300 */
+        }
+        .cost-highlight {
+          color: #10B981; /* Green-400 */
+        }
+        
+        /* Purchase Button Styling */
+        .purchase-button {
+          margin-top: 1.5rem;
+          width: 100%;
+          background: linear-gradient(45deg, #FFD700, #C70039); /* Gold to deep red */
+          color: #1A1A2E;
+          font-family: 'Montserrat', sans-serif;
+          transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .purchase-button:hover {
+          background: linear-gradient(45deg, #FFC107, #D32F2F);
+          transform: scale(1.02);
+        }
+        
+        /* Link Styling (if any links are added later) */
+        a {
+          color: #00BFFF;
+          text-decoration: none;
+          transition: color 0.3s ease;
+        }
+        a:hover {
+          color: #FFD700;
+        }
+      `}</style>
     </div>
   );
 }
