@@ -2,7 +2,7 @@
 
 import { BigNumber, Contract, ethers } from "ethers";
 import { createContext, useContext, useEffect, type ReactNode, useState } from "react";
-import { contractAddress, abi } from "./contract";
+import { contractAddress, abi } from "../app/contract";
 import { useAccount } from "wagmi";
 import toast from "react-hot-toast";
 
@@ -41,8 +41,6 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
             connectContract();
         }
     }, [isConnected]);
-
-    console.log(contractAddress);
 
     const checkLotteryEnded = async (id: number) => {
         if (!contract) {
