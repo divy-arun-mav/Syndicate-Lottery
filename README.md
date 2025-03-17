@@ -346,8 +346,8 @@ This project is licensed under the MIT License. This choice reflects a commitmen
 ## Contact
 
 - **Project Repository:**  
-  [https://github.com/your_username/syndicate_hackniche_3.0](https://github.com/your_username/syndicate_hackniche_3.0)
-- **Email:** your_email@example.com
+  [https://github.com/your_username/syndicate_hackniche_3.0](https://github.com/divy-arun-mav/Syndicate-Lottery/tree/master)
+  
 
 For further discussions on theoretical aspects or collaboration opportunities, please feel free to reach out.
 
